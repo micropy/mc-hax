@@ -1,13 +1,12 @@
 from mcstatus import JavaServer
 import os
 import threading
-import lodestone
 import random
 import time
+import dns.resolver
+import cmd
 
-def servercheck():
-    serverip = input("Enter Minecraft Server IP: ")
-    server_port = input("Enter a Port: ")
+def servercheck(serverip, server_port):
     # Get Java Server status
     server = JavaServer.lookup(f"{serverip}:{server_port}")
     status = server.status()
@@ -22,33 +21,59 @@ def servercheck():
 
 
 
-def botjoining():
-    # quest all things required
-    server_ip = input('enter an server ip: ')
-    server_port = input('enter an server port: ')
-    bot_name = input('name of bots: ')
-    bots_amount = int(input('amount of bots: '))
-    bots_time = int(input('time in the servers: '))
+def domainbruteforce():
+    serverip = input('enter server ip: ')
+    wordlist = input('enter a wordlist path: ')
 
-    if bots_amount > 1:
-        for bot_amount in range(bots_amount):
-            # modify de bots name to a different name for each bot
-            random_num = random.randint(1, 1000000)
-            random_num = str(random_num)
-            bot_name_new = bot_name+'_'+random_num
-            print(bot_name_new)
-            # create bots
-            bot = lodestone.createBot(
-                host=server_ip,
-                port=server_port,
-                username=bot_name_new,
-                auth='offline'
-            )
-            # connect bots
-            bot.connect()
-            print(f'bot: {bot_name_new} join')
-        time.sleep(bots_time)
-        for bot_amount in range(bots_amount):
-            print('disconnecting bots')
-            bot.disconnect()
-botjoining()
+    ip_splitted = serverip.split('.')
+    with open(wordlist, encoding='utf-8') as wordlist_loaded:
+        for word in wordlist:
+            try:
+                try_domain = dns.resolver.resolve(serverip[0].replace(word), "A")
+                print(f"domain: {serverip[0].replace(word)} exists")
+            except (dns.reslover.NXDOMAIN, dns.resolver.NoAnswer, dns.resolver.Timeout):
+                pass
+
+
+class ServerCmd(cmd.Cmd):
+    prompt='PenguinMC> '
+
+    def __init__(self):
+        super().__init__()
+        self.print_penguinmc()
+    
+    def print_penguinmc(self):
+        print("""
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡤⣾⠷⠦⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⡾⣅⠀⣘⡆⠀⢀⣙⣦⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡟⠀⠀⠉⠻⠷⠾⠿⢭⣍⡽⠿⠛⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⠃⠀⠀⠀⠀⠀⠀⢠⡞⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠏⠀⠀⠀⠀⠀⠀⠀⢃⡼⠳⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡏⢀⠤⠤⠤⠤⠤⠒⠒⠉⠀⠀⠹⣦⣀⣀⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡷⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⡟⣏⠓⠛⠿⢿⣷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡴⢻⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⡏⠀⠀⠀⠀⠈⢳⡙⣧⡀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⣏⠤⣼⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣯⠉⠛⠲⢦⣄⠀⣧⠘⣧⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢀⡠⢖⠿⠛⢻⠀⠀⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡄⠀⠀⠀⠉⢳⣏⣠⡟⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣠⠖⣫⠔⠁⠀⠀⣌⣀⡤⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣇⠀⠀⠀⠀⠀⠈⠉⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⣠⢞⡵⠊⠀⢀⣤⠴⠚⠉⠁⠀⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⢀⡴⢃⠎⠀⣠⡶⠋⠀⠀⠀⠀⠀⠀⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⢀⡾⠁⡌⢀⡾⠋⠀⠀⠀⠀⠀⠀⠀⠀⢻⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⢸⡇⠀⣷⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠈⠳⠞⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡄⠀⣸⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡆⠀⠀⠀⠀⠀⡆⠀⠀⠀⠀⢀⠞⠀⣠⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⡀⠀⠀⠀⠐⡇⠀⠀⠀⠀⣜⠀⣰⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣧⠀⠀⠀⠀⣇⠀⠀⠀⠀⡏⠉⠉⠓⠢⠤⣄⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣼⣦⠀⠀⣀⣾⡤⠶⠖⠒⢳⡀⠀⣄⣀⣹⣶⠼⠷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢴⣻⣃⠈⢳⠉⢀⡇⠀⠀⠀⠀⠈⠙⠚⠻⠁⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠋⠻⠶⣿⢀⠁⠉⠳⠤⣄⡀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢛⠙⠉⠙⠋⠉⠉⠀⠀⠀⠀⠀⠀⠀
+              """)
+
+    def do_servercheck(self, arg):
+        ip, port = arg.split(' ')
+        servercheck(ip, int(port))
+
+
+ServerCmd().cmdloop()
