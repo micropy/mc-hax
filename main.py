@@ -1,7 +1,7 @@
-from mcstatus import JavaServer
 import subprocess
 import os
 import sys
+from colorama import Fore
 
 def set_terminal_title():
     if sys.platform == "win32":
@@ -75,12 +75,12 @@ actions = {
 print_penguinmc()
 
 def menu():
-    arg = input("PenguinMC> ").split()
+    arg = input(f'{Fore.BLUE}PenguinMC{Fore.RESET}> ').split()
     if arg[0] in actions and len(arg) <2:
         actions[arg[0]]()
     elif arg[0] in actions:
         actions[arg[0]](arg[1:])
     else:
-        print(f'unknown command: {arg[0]} write help for list of commands')
+        print(f'{Fore.RED}[{Fore.RESET}+{Fore.RED}]{Fore.RESET} Unknown command: "{arg[0]}" write {Fore.GREEN}help{Fore.RESET} for list of commands')
 while True:
     menu()
