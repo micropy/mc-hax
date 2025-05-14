@@ -44,10 +44,6 @@ def do_servercheck(arg):
     serverip, server_port = ''.join(arg).split(':')
     subprocess.run(['python', 'commands//servercheck.py', serverip, server_port])
 
-def do_domainsbruteforce(arg):
-    serverip, wordlist = arg.split(':')
-    subprocess.run(['python', 'commands//domainsbruteforce.py', serverip, wordlist])
-
 def do_botsjoining(arg):
     serverip, server_port, version, bot_amount, bot_name, timein = arg.split(':')
     subprocess.run(['node', 'commands//botsjoining.js'] + arg)
@@ -60,15 +56,19 @@ def do_checkpassword(arg):
     serverip, server_port, version, bot_name, password = arg
     subprocess.run(['node', 'commands//checkpassword.js'] + arg)
 
+def do_portschecker(arg):
+    portsfile = ''.join(arg)
+    subprocess.run(['python', 'commands//portschecker.py', portsfile])
+
 def do_help():
     subprocess.run(['python', 'commands//help.py'])
 
 actions = {
     'servercheck':do_servercheck,
-    'domainsbruteforce':do_domainsbruteforce,
     'botsjoining': do_botsjoining,
     'playercheck': do_playercheck,
     'checkpassword': do_checkpassword,
+    'portschecker': do_portschecker,
     'help': do_help
 }
 
