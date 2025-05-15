@@ -1,19 +1,13 @@
-from mcstatus import JavaServer
+from rstatus import RStatusClient
 import sys
 
-def servercheck(serverip, server_port):
+def servercheck(args):
     try:
         # Get Java Server status
-        server = JavaServer.lookup(f"{serverip}:{server_port}")
-        status = server.status()
-        if status.latency <100:
-            print("Server State: Excellent")
-        elif status.latency >100 <200:
-            print("Server State: Average")
-        elif status.latency <200:
-            print("Server Status: Bad")
-        print(f"Server Latency> {status.latency}")
-        print(f"Online Players: {status.players.online}")
+        client = RStatusClient(args)
+        server_data = client.get_server_data(bot=False)
+        if server_data:
+                print(f"IP: {server_data.ip_address} Players Online: {server_data.players.online}")
     except Exception as e:
         print(e)
-servercheck(sys.argv[1], sys.argv[2])
+servercheck(sys.argv)

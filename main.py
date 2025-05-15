@@ -41,8 +41,8 @@ def print_penguinmc():
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢛⠙⠉⠙⠋⠉⠉⠀⠀⠀⠀⠀⠀⠀
           """)
 def do_servercheck(arg):
-    serverip, server_port = ''.join(arg).split(':')
-    subprocess.run(['python', 'commands//servercheck.py', serverip, server_port])
+    args = ''.join(arg)
+    subprocess.run(['python', 'commands//servercheck.py', args])
 
 def do_botsjoining(arg):
     serverip, server_port, version, bot_amount, bot_name, timein = arg.split(':')
