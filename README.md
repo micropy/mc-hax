@@ -1,6 +1,6 @@
 # 🐧 PenguinMC - Minecraft Server Utilities
 
-PenguinMC is a powerful command-line toolkit for interacting with Minecraft servers. It allows players and administrators to check server status, verify player information, inspect open ports, automate bot joining, and test server passwords.
+PenguinMC is a basic command-line toolkit for interacting with Minecraft servers. It allows players and administrators to check server status, verify player information, inspect open ports, automate bot joining, and test server passwords.
 
 ## 🚀 Features
 - **Server Check**: Verify the status of a Minecraft server.
