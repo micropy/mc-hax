@@ -34,10 +34,4 @@ def mojangapi(username):
             Panel.fit(f"[bold red]Request failed (status code {response.status_code})[/bold red]", border_style="red", title="Error ⚠️")
         )
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        console.print(
-            Panel.fit("[bold red]Usage:[/bold red] python playercheck.py [bold yellow]<username>[/bold yellow]", title="❗ Missing Argument", border_style="red")
-        )
-    else:
-        mojangapi(sys.argv[1])
+mojangapi(sys.argv[1])

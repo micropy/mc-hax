@@ -37,11 +37,5 @@ def servercheck(ip, port):
         console.print(
             Panel.fit(f"[bold red]An error occurred:[/bold red]\n[italic]{str(e)}[/italic]",
                       title="❌ Exception", border_style="red"))
-
-if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        console.print(
-            Panel.fit("[bold red]Usage:[/bold red] python servercheck.py [bold yellow]<ip> <port>[/bold yellow]",
-                      title="❗ Missing Arguments", border_style="red"))
-    else:
-        servercheck(sys.argv[1], sys.argv[2])
+        
+servercheck(sys.argv[1], sys.argv[2])

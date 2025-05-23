@@ -46,10 +46,4 @@ def checkport(file_path):
     except Exception as e:
         console.print(Panel.fit(f"[bold red]Unexpected error:[/bold red] {str(e)}", title="❌ Error"))
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        console.print(Panel.fit(
-            "[bold red]Usage:[/bold red] python portschecker.py [bold yellow]<path_to_file>[/bold yellow]",
-            title="❗ Missing Argument", border_style="red"))
-    else:
-        checkport(sys.argv[1])
+checkport(sys.argv[1])
