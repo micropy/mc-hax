@@ -82,8 +82,6 @@ def menu():
     arg = input("> ").split()
     if arg[0] in actions and len(arg) < 2:
         actions[arg[0]]()
-    if arg[0] in actions and len(arg) <2:
-        actions[arg[0]]()
     elif arg[0] in actions:
         actions[arg[0]](arg[1:])
     else:
