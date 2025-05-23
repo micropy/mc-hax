@@ -6,8 +6,8 @@ console = Console()
 def help():
     table = Table(title="[bold cyan]PenguinMC - Commands[/bold cyan]", show_header=True, header_style="bold magenta")
 
-    table.add_column("Comando", style="bold red", justify="center")
-    table.add_column("Uso", style="bold yellow")
+    table.add_column("Commands", style="bold red", justify="center")
+    table.add_column("Use", style="bold yellow")
 
     table.add_row("servercheck", "<serverip>:<port> → Check server status")
     table.add_row("portschecker", "<portsfile> → Check ports from a file")
