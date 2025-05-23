@@ -1,2 +1,4 @@
 rich
 rstatus
+rich
+requests
