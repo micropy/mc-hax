@@ -1,49 +1,50 @@
 from rstatus import RStatusClient
 import sys
 from rich.console import Console
-from rich.table import Table
-from rich.panel import Panel
 from rich.text import Text
+from rich.panel import Panel
+from rich.table import Table
 from rich import box
+from rich.rule import Rule
 
 console = Console()
 
-def checkport(file_path):
-    try:
-        with open(file_path, encoding="utf-8") as ports_file:
-            read_lines = [line.strip() for line in ports_file if line.strip()]
-            if not read_lines:
-                console.print(Panel.fit("[bold yellow]The file is empty or improperly formatted.[/bold yellow]", title="⚠️ Warning"))
-                return
+def checkport(file):
+    console.print(Rule(title="[bold cyan]🔌 Port Status Checker[/bold cyan]", characters="━"))
+    
+    with open(file, encoding="utf-8") as portsfile:
+        readedfile = portsfile.readlines()
+        for row in readedfile:
+            row = row.strip()
+            try:
+                client = RStatusClient(row)
+                server_data = client.get_server_data(bot=False)
 
-            table = Table(title="🔌 [bold cyan]Port Checker Results[/bold cyan]", box=box.ROUNDED, show_lines=True)
-            table.add_column("Target", style="bold magenta", justify="left")
-            table.add_column("Status", style="bold yellow", justify="center")
-            table.add_column("Players", style="bold green", justify="center")
+                table = Table(box=box.MINIMAL, show_edge=False, expand=True, padding=(0, 1))
+                table.add_column("Info", justify="right", style="bold blue")
+                table.add_column("Data", justify="left", style="bold yellow")
 
-            for row in read_lines:
-                try:
-                    client = RStatusClient(row)
-                    server_data = client.get_server_data(bot=False)
+                table.add_row("🌐 IP", f"{server_data.ip_address}")
+                table.add_row("👥 Players", f"[bold green]{server_data.players.online}[/bold green]")
 
-                    status = "[bold green]🟢 Open[/bold green]"
-                    players = f"{server_data.players.online}"
-                    table.add_row(f"{server_data.ip_address}", status, players)
+                console.print(Panel.fit(table, title=f"[bold green]✅ {row}[/bold green]", border_style="green"))
 
-                except (TimeoutError, ConnectionRefusedError):
-                    status = "[bold red]🔴 Closed[/bold red]"
-                    table.add_row(f"{row}", status, "N/A")
+            except (TimeoutError, ConnectionRefusedError):
+                console.print(
+                    Panel.fit(
+                        f"[bold red]{row}[/bold red] - [italic]isn't open[/italic]",
+                        title="⚠️ [bold red]Connection Error[/bold red]",
+                        border_style="red"
+                    )
+                )
 
-                except Exception as e:
-                    status = "[bold red]⚠️ Error[/bold red]"
-                    table.add_row(f"{row}", status, str(e))
-
-            console.rule("[bold cyan]📋 Port Scan Summary[/bold cyan]")
-            console.print(table)
-
-    except FileNotFoundError:
-        console.print(Panel.fit(f"[bold red]File not found:[/bold red] {file_path}", title="❌ Error"))
-    except Exception as e:
-        console.print(Panel.fit(f"[bold red]Unexpected error:[/bold red] {str(e)}", title="❌ Error"))
+            except Exception as e:
+                console.print(
+                    Panel.fit(
+                        f"[bold red]Error:[/bold red] {e}",
+                        title="❌ [bold red]Exception[/bold red]",
+                        border_style="red"
+                    )
+                )
 
 checkport(sys.argv[1])
