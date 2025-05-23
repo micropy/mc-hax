@@ -1,6 +1,5 @@
 from rstatus import RStatusClient
 import sys
-from colorama import Fore  # Mantenido por compatibilidad aunque no se use
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
